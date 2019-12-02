@@ -387,10 +387,12 @@
                 }
             }
 
+	    $scope.allMessages = 3;
 
 
+            $scope.allWords = ['Happy', 'Angry', 'Baby', 'Old', 'Angel', 'Devil', 'Beard', 'Double T', 'Abraham Lincoln', 'Hat'];
 
-            $scope.currentWord = "Positive";
+            $scope.currentWord = $scope.allWords[Math.floor(Math.random() * Math.floor($scope.allWords.length))];
             $scope.temoText = "Enter a guess or or a chat";
 
             $scope.messages =
@@ -421,15 +423,27 @@
                 cont = document.getElementById('textContainer').value;
                 console.log(document.getElementById('textContainer').value);
                 if (cont.length == $scope.currentWord) {
+		    cont = cont.toLowerCase();
                     checkContent(cont);
                 }
                 else {
+		    if ($scope.messages.length > 7) {
+                        $scope.messages.splice(0, 1);
+                    }
                     addMessage(cont, true);
                 }
             }
 
             function checkContent(cont) {
-                return (cont == $scope.currentWord);
+                var tempCurrentWord = $scope.currentWord.toLowerCase();
+                if (cont == tempCurrentWord) {
+                    addMessage("User has made a correct guess", true);
+                    return true;
+                }
+                else {
+                    addMessage("User has made an incorrect guess", true);
+                    return false;
+                }
             }
 
             function addMessage(cont, isU) {
