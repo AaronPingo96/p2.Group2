@@ -17,4 +17,4 @@ we used handtrack.js for the motion tracking of hands
 
 
 Demo Link:
-http://camdraw.azurewebsites.net/
+https://camdraw.azurewebsites.net/
