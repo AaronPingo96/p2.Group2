@@ -1,0 +1,575 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<head>
+    <meta charset="utf-8" />
+    <title>drawcam.io</title>
+
+    <!--Importing Everything-->
+	<script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"> </script>
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.0/jquery-ui.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+    
+
+	<link rel="stylesheet" href="https://unpkg.com/carbon-components@latest/css/carbon-components.css" />
+	<link rel="stylesheet" href="track.css">
+
+
+    <!--
+
+        NOTE!!!
+
+        Normal convention would be for the CSS and all of the JS to be in their own respective files,
+        however we decided with no good way to do any source control or work in the same file system
+        that doing it all in the index file would save us alot of headache
+
+    -->
+
+    <style>
+
+        /**ALL the global CSS is in this tag*/
+
+
+        #container {
+            margin: 0px;
+            height: 900px;
+        }
+
+        #videoElement {
+            width: 100%;
+            height: 100%;
+            background-color: #666;
+            z-index: 1;
+            transform: rotateY(180deg);
+            -webkit-transform: rotateY(180deg);
+        }
+
+
+        #panel-body {
+            padding: 0px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 28px;
+            font-size: 12px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+            .btn:hover {
+                background-color: #ddd;
+                color: black;
+            }
+
+        #iframe {
+            overflow: hidden;
+        }
+    </style>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            background: #7F7FD5;
+            background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+            background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+        }
+
+        .chat {
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        .card {
+            max-height: 100%;
+            border-radius: 15px !important;
+            background-color: rgba(0,0,0,0.4) !important;
+        }
+
+        .contacts_body {
+            padding: 0.75rem 0 !important;
+            overflow-y: auto;
+            white-space: nowrap;
+        }
+
+        .msg_card_body {
+            overflow-y: auto;
+        }
+
+        .card-header {
+            border-radius: 15px 15px 0 0 !important;
+            border-bottom: 0 !important;
+        }
+
+        .card-footer {
+            border-radius: 0 0 15px 15px !important;
+            border-top: 0 !important;
+        }
+
+        .container {
+            align-content: center;
+        }
+
+        .search {
+            border-radius: 15px 0 0 15px !important;
+            background-color: rgba(0,0,0,0.3) !important;
+            border: 0 !important;
+            color: white !important;
+        }
+
+            .search:focus {
+                box-shadow: none !important;
+                outline: 0px !important;
+            }
+
+        .type_msg {
+            background-color: rgba(0,0,0,0.3) !important;
+            border: 0 !important;
+            color: white !important;
+            height: 60px !important;
+            overflow-y: auto;
+        }
+
+            .type_msg:focus {
+                box-shadow: none !important;
+                outline: 0px !important;
+            }
+
+        .attach_btn {
+            border-radius: 15px 0 0 15px !important;
+            background-color: rgba(0,0,0,0.3) !important;
+            border: 0 !important;
+            color: white !important;
+            cursor: pointer;
+        }
+
+        .send_btn {
+            border-radius: 0 15px 15px 0 !important;
+            background-color: rgba(0,0,0,0.3) !important;
+            border: 0 !important;
+            color: white !important;
+            cursor: pointer;
+        }
+
+        .search_btn {
+            border-radius: 0 15px 15px 0 !important;
+            background-color: rgba(0,0,0,0.3) !important;
+            border: 0 !important;
+            color: white !important;
+            cursor: pointer;
+        }
+
+        .contacts {
+            list-style: none;
+            padding: 0;
+        }
+
+            .contacts li {
+                width: 100% !important;
+                padding: 5px 10px;
+                margin-bottom: 15px !important;
+            }
+			
+        .active {
+            background-color: rgba(0,0,0,0.3);
+        }
+
+        .user_img {
+            height: 70px;
+            width: 70px;
+            border: 1.5px solid #f5f6fa;
+        }
+
+        .user_img_msg {
+            height: 40px;
+            width: 40px;
+            border: 1.5px solid #f5f6fa;
+        }
+
+        .img_cont {
+            position: relative;
+            height: 70px;
+            width: 70px;
+        }
+
+        .img_cont_msg {
+            height: 40px;
+            width: 40px;
+        }
+
+        .online_icon {
+            position: absolute;
+            height: 15px;
+            width: 15px;
+            background-color: #4cd137;
+            border-radius: 50%;
+            bottom: 0.2em;
+            right: 0.4em;
+            border: 1.5px solid white;
+        }
+
+        .offline {
+            background-color: #c23616 !important;
+        }
+
+        .user_info {
+            margin-top: auto;
+            margin-bottom: auto;
+            margin-left: 15px;
+        }
+
+            .user_info span {
+                font-size: 20px;
+                color: white;
+            }
+
+            .user_info p {
+                font-size: 10px;
+                color: rgba(255,255,255,0.6);
+            }
+
+        .video_cam {
+            margin-left: 50px;
+            margin-top: 5px;
+        }
+
+            .video_cam span {
+                color: white;
+                font-size: 20px;
+                cursor: pointer;
+                margin-right: 20px;
+            }
+
+        .msg_cotainer {
+            margin-top: auto;
+            margin-bottom: auto;
+            margin-left: 10px;
+            border-radius: 25px;
+            background-color: #82ccdd;
+            padding: 10px;
+            position: relative;
+        }
+
+        .msg_cotainer_send {
+            margin-top: auto;
+            margin-bottom: auto;
+            margin-right: 10px;
+            border-radius: 25px;
+            background-color: #78e08f;
+            padding: 10px;
+            position: relative;
+        }
+
+        .msg_time {
+            position: absolute;
+            left: 0;
+            bottom: -15px;
+            color: rgba(255,255,255,0.5);
+            font-size: 10px;
+        }
+
+        .msg_time_send {
+            position: absolute;
+            right: 0;
+            bottom: -15px;
+            color: rgba(255,255,255,0.5);
+            font-size: 10px;
+        }
+
+        .msg_head {
+            position: relative;
+        }
+
+        #action_menu_btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .action_menu {
+            z-index: 1;
+            position: absolute;
+            padding: 15px 0;
+            background-color: rgba(0,0,0,0.5);
+            color: white;
+            border-radius: 15px;
+            top: 30px;
+            right: 15px;
+            display: none;
+        }
+
+            .action_menu ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+                .action_menu ul li {
+                    width: 100%;
+                    padding: 10px 15px;
+                    margin-bottom: 5px;
+                }
+
+                    .action_menu ul li i {
+                        padding-right: 10px;
+                    }
+
+                    .action_menu ul li:hover {
+                        cursor: pointer;
+                        background-color: rgba(0,0,0,0.2);
+                    }
+
+        @media(max-width: 576px) {
+            .contacts_card {
+                margin-bottom: 15px !important;
+            }
+        }
+    </style>
+	
+    <script>
+        $(document).ready(function () {
+            $('#action_menu_btn').click(function () {
+                $('.action_menu').toggle();
+            });
+        });
+    </script>
+</head>
+
+
+
+<body>
+    <script>
+        returnHit = false;
+        //all of the angular code resides in this tag
+
+
+
+        //module
+        var app = angular.module("myApp", []);
+
+
+        //controllers
+        app.controller('ctrl1', function ($scope, $interval) {
+            var textbox = document.getElementById('textContainer');
+
+            textbox.addEventListener("keydown", function (e) {
+                if (e.keyCode === 13) {
+                    //console.log("Hit");
+                    takeInput();
+                }
+            });
+
+            $interval(checkReturnKey, 1000);
+
+            function checkReturnKey() {
+                if (returnHit) {
+                    takeInput();
+                }
+            }
+
+
+
+
+            $scope.currentWord = "Positive";
+            $scope.temoText = "Enter a guess or or a chat";
+
+            $scope.messages =
+                [
+                    {
+                        content: "This is the first message",
+                        isUser: false,
+                        time: new Date(),
+
+                    },
+                    {
+                        content: "This is the second message",
+                        isUser: true,
+                        time: new Date()
+                    },
+                    {
+                        content: "This is the last message",
+                        isUser: false,
+                        time: new Date(),
+                    }
+                ];
+
+            $scope.addMessage = addMessage;
+            $scope.takeInput = takeInput;
+            $scope.checkContent = checkContent;
+
+            function takeInput() {
+                cont = document.getElementById('textContainer').value;
+                console.log(document.getElementById('textContainer').value);
+                if (cont.length == $scope.currentWord) {
+                    checkContent(cont);
+                }
+                else {
+                    addMessage(cont, true);
+                }
+            }
+
+            function checkContent(cont) {
+                return (cont == $scope.currentWord);
+            }
+
+            function addMessage(cont, isU) {
+                $scope.messages.push(
+                    {
+                        content: cont,
+                        isUser: isU,
+                        time: new Date()
+                    });
+            }
+
+
+
+        });
+		
+		
+ </script>
+
+    <!--starts the area controlled by angular-->
+    <div ng-app="myApp">
+        <!--starts the area controlled by angular-->
+        <div ng-controller="ctrl1">
+            <div class="col-md-3">
+                <div class="card">
+
+                    <!--This is the header -->
+                    <div class="card-header msg_head">
+                        <div class="d-flex bd-highlight">
+                            <div class="img_cont">
+                                <img src="https://www.pinclipart.com/picdir/middle/16-161267_cloud-clipart-text-thought-bubble-png-transparent-png.png" class="rounded-circle user_img">
+                                <span class="online_icon"></span>
+                            </div>
+                            <div class="user_info">
+                                <span>Chat & Word Guessing </span>
+                                <p>{{messages.length}} Messages</p>
+                            </div>
+                            <div class="video_cam">
+                                <span><i class="fas fa-video"></i></span>
+                                <span><i class="fas fa-phone"></i></span>
+                            </div>
+                        </div>
+                        <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
+                        <div class="action_menu">
+                            <ul>
+                                <li><i class="fas fa-user-circle"></i> View profile</li>
+                                <li><i class="fas fa-users"></i> Add to close friends</li>
+                                <li><i class="fas fa-plus"></i> Add to group</li>
+                                <li><i class="fas fa-ban"></i> Block</li>
+                            </ul>
+                        </div>
+                    </div>
+
+
+                    <!--This is where the messages go -->
+                    <div class="card-body msg_card_body">
+
+                        <!--Loop through the messages list-->
+                        <div class="list">
+                            <div class="option" ng-repeat="mess in messages">
+                                <!--This will display is the message is not from the user -->
+                                <div class="d-flex justify-content-start mb-4" ng-if="!mess.isUser">
+                                    <div class="img_cont_msg">
+                                        <img src="https://cdn2.iconfinder.com/data/icons/lightly-icons/30/user-480.png" class="rounded-circle user_img_msg">
+                                    </div>
+                                    <div class="msg_cotainer">
+                                        {{mess.content}}
+                                        <span class="msg_time_send">{{mess.time.toLocaleString()}}</span>
+                                    </div>
+                                </div>
+                                <!--This will display if it is the user-->
+                                <div class="d-flex justify-content-end mb-4" ng-if="mess.isUser">
+                                    <div class="msg_cotainer_send">
+                                        {{mess.content}}
+                                        <span class="msg_time_send">{{mess.time.ttoLocaleString()}}</span>
+                                    </div>
+                                    <div class="img_cont_msg">
+                                        <img src="https://cdn4.iconfinder.com/data/icons/man-and-woman/154/man-human-person-login-512.png" class="rounded-circle user_img_msg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!--This is the input -->
+                    <div class="card-footer">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+                            </div>
+                            <textarea on-keyup="returnHit = true" keys="[27,13]" id="textContainer" name="" class="form-control type_msg" placeholder="Type your message..." ng-model="tempText"></textarea>
+                            <div class="input-group-append">
+                                <span class="input-group-text send_btn" ng-click="takeInput()"><i class="fas fa-location-arrow"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			
+			
+            <div class="col-md-9">
+                <h1 style="display: inline;">You are the Drawer</h1><h1 style="display: inline;margin-left:150px;">The Current Word is -> {{currentWord}}</h1>
+
+                <div class="col-md-9" style="z-index: 2;">
+                    <!--This div will overlay the camera, so everything appears on top of the camera -->
+                    <div id="overlay">
+						<div id="overtext">
+						
+							<body class="bx--body p20">
+							<!-- <img id="img" src="hand.jpg"/>  -->
+							<div class="mb10">
+								<button onclick="toggleVideo()" id="trackbutton" class="bx--btn bx--btn--secondary" type="button">
+									Toggle Video
+								</button>
+								
+								<div id="updatenote" class="updatenote mt10"> loading model ..</div>
+							</div>
+							<video class="videobox canvasbox" autoplay="autoplay" id="myvideo" hidden></video>
+
+							<canvas id="canvas" class="border canvasbox"></canvas>
+
+							<script src="https://unpkg.com/carbon-components@latest/scripts/carbon-components.js"></script>
+							<script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"> </script>
+							<script src="track.js"></script>
+							<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+							<script src="doodle.jsx" type="text/babel"</script>
+							</body>
+							
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
