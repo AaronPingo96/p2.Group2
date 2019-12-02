@@ -395,25 +395,7 @@
             $scope.currentWord = $scope.allWords[Math.floor(Math.random() * Math.floor($scope.allWords.length))];
             $scope.temoText = "Enter a guess or or a chat";
 
-            $scope.messages =
-                [
-                    {
-                        content: "This is the first message",
-                        isUser: false,
-                        time: new Date(),
-
-                    },
-                    {
-                        content: "This is the second message",
-                        isUser: true,
-                        time: new Date()
-                    },
-                    {
-                        content: "This is the last message",
-                        isUser: false,
-                        time: new Date(),
-                    }
-                ];
+            $scope.messages = [];
 
             $scope.addMessage = addMessage;
             $scope.takeInput = takeInput;
