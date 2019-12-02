@@ -404,6 +404,7 @@
             function takeInput() {
                 cont = document.getElementById('textContainer').value;
                 console.log(document.getElementById('textContainer').value);
+		document.getElementById('textContainer').value = '';
                 if (cont.length == $scope.currentWord) {
 		    cont = cont.toLowerCase();
                     checkContent(cont);
