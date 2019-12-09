@@ -1,4 +1,4 @@
-﻿
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,23 +9,23 @@
     <title>drawcam.io</title>
 
     <!--Importing Everything-->
-	<script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"> </script>
-	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.0/jquery-ui.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
 
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
-    
 
-	<link rel="stylesheet" href="https://unpkg.com/carbon-components@latest/css/carbon-components.css" />
-	<link rel="stylesheet" href="track.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/carbon-components@latest/css/carbon-components.css" />
+    <link rel="stylesheet" href="track.css">
 
 
     <!--
@@ -186,7 +186,7 @@
                 padding: 5px 10px;
                 margin-bottom: 15px !important;
             }
-			
+
         .active {
             background-color: rgba(0,0,0,0.3);
         }
@@ -345,7 +345,7 @@
             }
         }
     </style>
-	
+
     <script>
         $(document).ready(function () {
             $('#action_menu_btn').click(function () {
@@ -369,7 +369,36 @@
 
 
         //controllers
-        app.controller('ctrl1', function ($scope, $interval) {
+        app.controller('wholePage', function ($scope) {
+            $scope.showHome = true;
+            $scope.showGame = false;
+            $scope.showTutorial = false;
+
+
+            $scope.openHome = openHome;
+            $scope.openTutorial = openTutorial;
+            $scope.openGame = openGame;
+
+
+            function openHome() {
+                $scope.showGame = false;
+                $scope.showTutorial = false;
+                $scope.showHome = true;
+            }
+            function openTutorial() {
+                $scope.showGame = false;
+                $scope.showHome = false;
+                $scope.showTutorial = true;
+            }
+            function openGame() {
+                $scope.showTutorial = false;
+                $scope.showHome = false;
+                $scope.showGame = true;
+            }
+        });
+
+
+        app.controller('gameController', function ($scope, $interval) {
             var textbox = document.getElementById('textContainer');
 
             textbox.addEventListener("keydown", function (e) {
@@ -387,7 +416,7 @@
                 }
             }
 
-	    $scope.allMessages = 3;
+            $scope.allMessages = 0;
 
 
             $scope.allWords = ['Happy', 'Angry', 'Baby', 'Old', 'Angel', 'Devil', 'Beard', 'Double T', 'Abraham Lincoln', 'Hat'];
@@ -402,23 +431,29 @@
             $scope.checkContent = checkContent;
 
             function takeInput() {
+                $scope.allMessages++;
                 cont = document.getElementById('textContainer').value;
-                console.log(document.getElementById('textContainer').value);
-		document.getElementById('textContainer').value = '';
-                if (cont.length == $scope.currentWord) {
-		    cont = cont.toLowerCase();
+                //console.log(document.getElementById('textContainer').value);
+                document.getElementById('textContainer').value = "";
+                if (cont.length == $scope.currentWord.length) {
+                    cont = cont.toLowerCase();
+                    //console.log(cont);
                     checkContent(cont);
                 }
                 else {
-		    if ($scope.messages.length > 7) {
+                    if ($scope.messages.length > 7) {
                         $scope.messages.splice(0, 1);
                     }
                     addMessage(cont, true);
+
                 }
+
+                document.getElementById('textContainer').value = "";
             }
 
             function checkContent(cont) {
                 var tempCurrentWord = $scope.currentWord.toLowerCase();
+                //console.log(tempCurrentWord);
                 if (cont == tempCurrentWord) {
                     addMessage("User has made a correct guess", true);
                     return true;
@@ -441,125 +476,184 @@
 
 
         });
-		
-		
- </script>
+
+
+    </script>
 
     <!--starts the area controlled by angular-->
     <div ng-app="myApp">
-        <!--starts the area controlled by angular-->
-        <div ng-controller="ctrl1">
-            <div class="col-md-3">
-                <div class="card">
+        <div ng-controller="wholePage">
 
-                    <!--This is the header -->
-                    <div class="card-header msg_head">
-                        <div class="d-flex bd-highlight">
-                            <div class="img_cont">
-                                <img src="https://www.pinclipart.com/picdir/middle/16-161267_cloud-clipart-text-thought-bubble-png-transparent-png.png" class="rounded-circle user_img">
-                                <span class="online_icon"></span>
-                            </div>
-                            <div class="user_info">
-                                <span>Chat & Word Guessing </span>
-                                <p>{{messages.length}} Messages</p>
-                            </div>
-                            <div class="video_cam">
-                                <span><i class="fas fa-video"></i></span>
-                                <span><i class="fas fa-phone"></i></span>
-                            </div>
-                        </div>
-                        <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
-                        <div class="action_menu">
-                            <ul>
-                                <li><i class="fas fa-user-circle"></i> View profile</li>
-                                <li><i class="fas fa-users"></i> Add to close friends</li>
-                                <li><i class="fas fa-plus"></i> Add to group</li>
-                                <li><i class="fas fa-ban"></i> Block</li>
-                            </ul>
-                        </div>
-                    </div>
+            <div ng-show="showHome">
+                <div class="col-md-5"></div>
+                <div class="col-md-2">
+                    <br />
+                    <br />
+                    <br />
+                    <h1 style="text-align: center; font-size: xx-large;">Welcome to drawcam.io</h1>
+                    <br />
+                    <br />
+                    <button class="btn" ng-click="openGame()" style="font-size: large;">Play game</button>
+                    <br />
+                    <br />
+                    <button class="btn" ng-click="openTutorial()" style="font-size: large;">Open Instructions</button>
+                </div>
+                <div class="col-md-5"></div>
+            </div>
 
-
-                    <!--This is where the messages go -->
-                    <div class="card-body msg_card_body">
-
-                        <!--Loop through the messages list-->
-                        <div class="list">
-                            <div class="option" ng-repeat="mess in messages">
-                                <!--This will display is the message is not from the user -->
-                                <div class="d-flex justify-content-start mb-4" ng-if="!mess.isUser">
-                                    <div class="img_cont_msg">
-                                        <img src="https://cdn2.iconfinder.com/data/icons/lightly-icons/30/user-480.png" class="rounded-circle user_img_msg">
-                                    </div>
-                                    <div class="msg_cotainer">
-                                        {{mess.content}}
-                                        <span class="msg_time_send">{{mess.time.toLocaleString()}}</span>
-                                    </div>
-                                </div>
-                                <!--This will display if it is the user-->
-                                <div class="d-flex justify-content-end mb-4" ng-if="mess.isUser">
-                                    <div class="msg_cotainer_send">
-                                        {{mess.content}}
-                                        <span class="msg_time_send">{{mess.time.ttoLocaleString()}}</span>
-                                    </div>
-                                    <div class="img_cont_msg">
-                                        <img src="https://cdn4.iconfinder.com/data/icons/man-and-woman/154/man-human-person-login-512.png" class="rounded-circle user_img_msg">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!--This is the input -->
-                    <div class="card-footer">
-                        <div class="input-group">
-                            <div class="input-group-append">
-                                <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
-                            </div>
-                            <textarea on-keyup="returnHit = true" keys="[27,13]" id="textContainer" name="" class="form-control type_msg" placeholder="Type your message..." ng-model="tempText"></textarea>
-                            <div class="input-group-append">
-                                <span class="input-group-text send_btn" ng-click="takeInput()"><i class="fas fa-location-arrow"></i></span>
-                            </div>
-                        </div>
-                    </div>
+            <div ng-show="showTutorial">
+                <div class="col-md-2">
+                    <br />
+                    <button class="btn" ng-click="openHome()" style="font-size: large;">Return to home</button>
+                </div>
+                <div class="col-md-10">
+                    <h1>Tutorial</h1>
+                    <br />
+                    <p>
+                        This game is similar to the game pictionary, with the rules staying the same.  The main difference is that for this game we encourage you to draw using your webcam.
+                        <br />
+                        <br />
+                        <br />
+                        <h3>The Drawer</h3>
+<p>
+                            As the drawer you use your hand as the cursor to draw the picture, to match the "Current word" in the top right of your screen.  The software will display
+                            where your finger is and it will draw where ever it picks up your finger.  You get more points for getting more people to correctly guess what you've drawn.
+                        </p>
+                        <br />
+                        <br />
+                        <h3>The Guesser</h3>
+                        <p>
+                        As the guesser you will be given a feed of the drawer, and you will be able to guess what is being drawn in the chat portal on the right.
+                        </p>
+                    </p>
                 </div>
             </div>
-			
-			
-            <div class="col-md-9">
-                <h1 style="display: inline;">You are the Drawer</h1><h1 style="display: inline;margin-left:150px;">The Current Word is -> {{currentWord}}</h1>
 
-                <div class="col-md-9" style="z-index: 2;">
-                    <!--This div will overlay the camera, so everything appears on top of the camera -->
-                    <div id="overlay">
-						<div id="overtext">
-						
-							<body class="bx--body p20">
-							<!-- <img id="img" src="hand.jpg"/>  -->
-							<div class="mb10">
-								<button onclick="toggleVideo()" id="trackbutton" class="bx--btn bx--btn--secondary" type="button">
-									Toggle Video
-								</button>
-								
-								<div id="updatenote" class="updatenote mt10"> loading model ..</div>
-							</div>
-							<video class="videobox canvasbox" autoplay="autoplay" id="myvideo" hidden></video>
 
-							<canvas id="canvas" class="border canvasbox"></canvas>
+            <!--this is the game controller -->
+            <div ng-show="showGame">
+                <div ng-controller="gameController">
+                    <div class="col-md-3">
+                        <div class="card">
 
-							<script src="https://unpkg.com/carbon-components@latest/scripts/carbon-components.js"></script>
-							<script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"> </script>
-							<script src="track.js"></script>
-							<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-							<script src="doodle.jsx" type="text/babel"</script>
-							</body>
-							
+                            <!--This is the header -->
+                            <div class="card-header msg_head">
+                                <div class="d-flex bd-highlight">
+                                    <div class="img_cont">
+                                        <img src="https://www.pinclipart.com/picdir/middle/16-161267_cloud-clipart-text-thought-bubble-png-transparent-png.png" class="rounded-circle user_img">
+                                        <span class="online_icon"></span>
+                                    </div>
+                                    <div class="user_info">
+                                        <span>Chat & Word Guessing </span>
+                                        <p>{{allMessages}} Messages</p>
+                                    </div>
+                                    <!--<div class="video_cam">
+                                        <span><i class="fas fa-video"></i></span>
+                                        <span><i class="fas fa-phone"></i></span>
+                                    </div>-->
+                                </div>
+                                <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
+                                <div class="action_menu">
+                                    <ul>
+                                        <li><i class="fas fa-user-circle"></i> View profile</li>
+                                        <li><i class="fas fa-users"></i> Add to close friends</li>
+                                        <li><i class="fas fa-plus"></i> Add to group</li>
+                                        <li><i class="fas fa-ban"></i> Block</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+
+                            <!--This is where the messages go -->
+                            <div class="card-body msg_card_body">
+
+                                <!--Loop through the messages list-->
+                                <div class="list">
+                                    <div class="option" ng-repeat="mess in messages">
+                                        <!--This will display is the message is not from the user -->
+                                        <div class="d-flex justify-content-start mb-4" ng-if="!mess.isUser">
+                                            <div class="img_cont_msg">
+                                                <img src="https://cdn2.iconfinder.com/data/icons/lightly-icons/30/user-480.png" class="rounded-circle user_img_msg">
+                                            </div>
+                                            <div class="msg_cotainer">
+                                                {{mess.content}}
+                                                <span class="msg_time_send">{{mess.time.toLocaleString()}}</span>
+                                            </div>
+                                        </div>
+                                        <!--This will display if it is the user-->
+                                        <div class="d-flex justify-content-end mb-4" ng-if="mess.isUser">
+                                            <div class="msg_cotainer_send">
+                                                {{mess.content}}
+                                                <span class="msg_time_send">{{mess.time.ttoLocaleString()}}</span>
+                                            </div>
+                                            <div class="img_cont_msg">
+                                                <img src="https://cdn4.iconfinder.com/data/icons/man-and-woman/154/man-human-person-login-512.png" class="rounded-circle user_img_msg">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!--This is the input -->
+                            <div class="card-footer">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text attach_btn"><!--<i class="fas fa-paperclip"></i>--></span>
+                                    </div>
+                                    <textarea rows='1' on-keyup="returnHit = true" keys="[27,13]" id="textContainer" name="" class="form-control type_msg" placeholder="Type your message..." ng-model="tempText"></textarea>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text send_btn" ng-click="takeInput()"><i class="fas fa-location-arrow"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <button class="btn" ng-click="openHome()" style="font-size: large;">Return to home</button>
+                    </div>
+
+
+                    <div class="col-md-9">
+                        <h1 style="display: inline; font-size: xx-large;">You are the Drawer</h1><h1 style="display: inline;margin-left:150px; font-size: xx-large;">The Current Word is -> {{currentWord}}</h1>
+
+                        <div class="col-md-9" style="z-index: 2;">
+                            <!--This div will overlay the camera, so everything appears on top of the camera -->
+                            <div id="overlay">
+                                <body id="overtext">
+
+                                    <body class="bx--body p20">
+                                        <!-- <img id="img" src="hand.jpg"/>  -->
+                                        <div class="mb10">
+                                            <button onclick="toggleVideo()" id="trackbutton" class="bx--btn bx--btn--secondary" type="button">
+                                                Toggle Video
+                                            </button>
+
+                                            <div id="updatenote" class="updatenote mt10"> Loading Camera interface ..</div>
+                                        </div>
+                                        <video class="videobox canvasbox" autoplay="autoplay" id="myvideo" hidden></video>
+
+                                        <canvas id="canvas" class="border canvasbox"></canvas>
+
+                                        <script src="https://unpkg.com/carbon-components@latest/scripts/carbon-components.js"></script>
+                                        <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"></script>
+                                        <script src="track.js"></script>
+                                        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+                                        <script src="doodle.jsx" type="text/babel"</script>
+                                    </body>
+
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+
+
+
+
+
+    </div>
     </div>
 </body>
 </html>
