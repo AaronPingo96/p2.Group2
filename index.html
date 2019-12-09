@@ -410,6 +410,15 @@
                     });
             }
         });
+        
+        app.filter('videoFilter', function () {
+            return function (x) {
+                if (x) {
+                    return 'True';
+                }
+                return 'False';
+            }
+        });
     </script>
 
     <!--starts the area controlled by angular-->
@@ -447,7 +456,7 @@
                         <br />
                         <br />
                         <h3>The Drawer</h3>
-<p>
+                        <p>
                             As the drawer you use your hand as the cursor to draw the picture, to match the "Current word" in the top right of your screen.  The software will display
                             where your finger is and it will draw where ever it picks up your finger.  You get more points for getting more people to correctly guess what you've drawn.
                         </p>
@@ -544,7 +553,7 @@
                         <button class="btn" ng-click="newWord()" style="font-size: large;">Change Word</button>
                         <br />
                         <br />
-                        <button class="btn" ng-click="toggleVideo()" style="font-size: large;">Toggle Video</button>
+                        <button class="btn" ng-click="toggleVideo()" style="font-size: large;">{{showVideo | videoFilter}}</button>
                         <br />
                         <br />
                         <button class="btn" ng-click="openHome()" style="font-size: large;">Return to home</button>
@@ -569,9 +578,9 @@
                                             <div id="updatenote" class="updatenote mt10"> Loading Camera interface ..</div>
                                             <div id="sketch-holder"></div>
                                         </div>
-                                        <video class="videobox canvasbox" autoplay="autoplay" id="myvideo" hidden></video>
+                                        <video class="videobox canvasbox" autoplay="autoplay" id="myvideo" ng-show="showVideo"></video>
 
-                                        <canvas id="canvas" class="border canvasbox"></canvas>
+                                        <canvas id="canvas" class="border canvasbox" ng-hide="showVideo"></canvas>
 
                                         <script src="https://unpkg.com/carbon-components@latest/scripts/carbon-components.js"></script>
                                         <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"></script>
