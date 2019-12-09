@@ -429,6 +429,13 @@
             $scope.addMessage = addMessage;
             $scope.takeInput = takeInput;
             $scope.checkContent = checkContent;
+            $scope.newWord = newWord;
+
+
+
+            function newWord() {
+                $scope.currentWord = $scope.allWords[Math.floor(Math.random() * Math.floor($scope.allWords.length))];
+            }
 
             function takeInput() {
                 $scope.allMessages++;
@@ -608,6 +615,9 @@
                                 </div>
                             </div>
                         </div>
+                        <br />
+                        <button class="btn" ng-click="newWord()" style="font-size: large;">Change Word</button>
+                        <br />
                         <br />
                         <button class="btn" ng-click="openHome()" style="font-size: large;">Return to home</button>
                     </div>
